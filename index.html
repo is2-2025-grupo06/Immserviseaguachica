@@ -21,6 +21,485 @@
       --color-gris-claro:  #f5f5f0;
     }
 
+    
+    /* ============================================================
+       MODAL DE BIENVENIDA — Estilos completos
+       Usa las variables de marca de Immersive Aguachica.
+    ============================================================ */
+
+    /* Contenedor raíz del modal (cubre toda la pantalla) */
+    .modal-bienvenida {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      /* Oculto por defecto; se activa con la clase .visible desde JS */
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .modal-bienvenida.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* Fondo oscurecido semitransparente */
+    .modal-bienvenida__backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    /* Caja blanca del modal */
+    .modal-bienvenida__caja {
+      position: relative;
+      background: #fff;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 460px;
+      max-height: 90vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.35);
+      /* Animación de entrada: sube desde abajo */
+      transform: translateY(40px) scale(0.96);
+      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .modal-bienvenida.visible .modal-bienvenida__caja {
+      transform: translateY(0) scale(1);
+    }
+
+    /* Scrollbar personalizada dentro del modal */
+    .modal-bienvenida__caja::-webkit-scrollbar { width: 4px; }
+    .modal-bienvenida__caja::-webkit-scrollbar-track { background: transparent; }
+    .modal-bienvenida__caja::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+
+    /* Franja de color de marca en la parte superior */
+    .modal-bienvenida__franja {
+      height: 5px;
+      background: linear-gradient(90deg, var(--color-verde) 0%, var(--color-verde-oscuro) 100%);
+      border-radius: 20px 20px 0 0;
+    }
+
+    /* Pantallas internas (bienvenida / login / registro) */
+    .modal-bienvenida__pantalla {
+      padding: 2rem 2.2rem 2.2rem;
+      display: none;
+      animation: pantallaEntrada 0.3s ease forwards;
+    }
+    .modal-bienvenida__pantalla.activa {
+      display: block;
+    }
+    @keyframes pantallaEntrada {
+      from { opacity: 0; transform: translateX(16px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Logo */
+    .modal-bienvenida__logo {
+      text-align: center;
+      margin-bottom: 1.2rem;
+    }
+    .modal-bienvenida__logo img {
+      height: 56px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    /* Título principal */
+    .modal-bienvenida__titulo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.6rem, 5vw, 2rem);
+      color: var(--color-negro);
+      text-align: center;
+      line-height: 1.15;
+      margin-bottom: 0.8rem;
+    }
+    .modal-bienvenida__titulo--resaltado {
+      color: var(--color-verde);
+    }
+
+    /* Subtítulo (pantallas de login/registro) */
+    .modal-bienvenida__subtitulo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      color: var(--color-negro);
+      margin-bottom: 0.4rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Descripción */
+    .modal-bienvenida__descripcion {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      color: #666;
+      text-align: center;
+      line-height: 1.65;
+      margin-bottom: 1.2rem;
+    }
+    .modal-bienvenida__descripcion--sm {
+      text-align: left;
+      font-size: 0.84rem;
+      margin-bottom: 1.4rem;
+    }
+
+    /* Separador decorativo horizontal */
+    .modal-bienvenida__separador {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--color-verde), transparent);
+      margin: 0 auto 1.5rem;
+      width: 60%;
+      border-radius: 2px;
+    }
+
+    /* ── Botones generales ── */
+    .modal-bienvenida__btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.8rem 1.2rem;
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-decoration: none;
+    }
+    .modal-bienvenida__btn:focus-visible {
+      outline: 3px solid var(--color-verde);
+      outline-offset: 2px;
+    }
+
+    /* Botón visitante (verde, principal) */
+    .modal-bienvenida__btn--visitante {
+      background: var(--color-verde);
+      color: var(--color-negro);
+      font-size: 0.95rem;
+      padding: 0.95rem 1.2rem;
+      letter-spacing: 0.03em;
+    }
+    .modal-bienvenida__btn--visitante:hover {
+      background: var(--color-verde-oscuro);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(140, 210, 17, 0.35);
+    }
+    .modal-bienvenida__btn--visitante:active { transform: translateY(0); }
+
+    /* Divisor "o accede con tu cuenta" */
+    .modal-bienvenida__divisor-opciones {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin: 1rem 0;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .modal-bienvenida__divisor-opciones::before,
+    .modal-bienvenida__divisor-opciones::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e8e8e8;
+    }
+
+    /* Grupo de botones login/registro en fila */
+    .modal-bienvenida__grupo-auth {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.7rem;
+    }
+
+    /* Botón login (oscuro) */
+    .modal-bienvenida__btn--login {
+      background: var(--color-negro);
+      color: #fff;
+    }
+    .modal-bienvenida__btn--login:hover {
+      background: #222;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    /* Botón registro (borde, ghost) */
+    .modal-bienvenida__btn--registro {
+      background: transparent;
+      color: var(--color-negro);
+      border: 2px solid var(--color-negro);
+    }
+    .modal-bienvenida__btn--registro:hover {
+      background: var(--color-negro);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    /* Botón submit (verde, para formularios) */
+    .modal-bienvenida__btn--submit {
+      background: var(--color-verde);
+      color: var(--color-negro);
+      margin-top: 0.5rem;
+    }
+    .modal-bienvenida__btn--submit:hover {
+      background: var(--color-verde-oscuro);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(140, 210, 17, 0.35);
+    }
+    .modal-bienvenida__btn--submit:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Botón volver (outline pequeño) */
+    .modal-bienvenida__btn-volver {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: none;
+      border: none;
+      color: #888;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      cursor: pointer;
+      padding: 0;
+      margin-bottom: 1rem;
+      transition: color 0.2s;
+    }
+    .modal-bienvenida__btn-volver:hover { color: var(--color-negro); }
+
+    /* ── Formulario ── */
+    .modal-bienvenida__form { display: flex; flex-direction: column; gap: 0; }
+
+    /* Campo de formulario */
+    .modal-bienvenida__campo {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1rem;
+    }
+    .modal-bienvenida__campo label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--color-gris);
+      margin-bottom: 0.35rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .modal-bienvenida__campo input {
+      padding: 0.7rem 0.9rem;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--color-negro);
+      background: #fafafa;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    .modal-bienvenida__campo input:focus {
+      border-color: var(--color-verde);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(140, 210, 17, 0.15);
+    }
+    .modal-bienvenida__campo input.campo-invalido {
+      border-color: #e74c3c;
+    }
+    .modal-bienvenida__campo input.campo-valido {
+      border-color: var(--color-verde);
+    }
+
+    /* Contenedor de input con botón de toggle password */
+    .modal-bienvenida__campo-password {
+      position: relative;
+    }
+    .modal-bienvenida__campo-password input {
+      width: 100%;
+      padding-right: 2.8rem;
+    }
+    .btn-toggle-password {
+      position: absolute;
+      right: 0.7rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #aaa;
+      padding: 0.2rem;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+    .btn-toggle-password:hover { color: var(--color-gris); }
+
+    /* Mensaje de error por campo */
+    .modal-bienvenida__campo-error {
+      font-size: 0.76rem;
+      color: #e74c3c;
+      margin-top: 0.3rem;
+      min-height: 1rem;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    /* Alerta de éxito o error global del formulario */
+    .modal-bienvenida__alerta {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: 'DM Sans', sans-serif;
+      margin-bottom: 1rem;
+    }
+    .modal-bienvenida__alerta--error {
+      background: #fff0f0;
+      border: 1px solid #f5c6cb;
+      color: #c0392b;
+    }
+    .modal-bienvenida__alerta--exito {
+      background: #f0fff4;
+      border: 1px solid #b7e4c7;
+      color: #1a7a3c;
+    }
+
+    /* Indicador de fortaleza de contraseña */
+    .modal-bienvenida__fortaleza {
+      margin: -0.4rem 0 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .modal-bienvenida__fortaleza-barra {
+      flex: 1;
+      height: 4px;
+      background: #eee;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .modal-bienvenida__fortaleza-progreso {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.4s ease, background 0.4s ease;
+      width: 0%;
+    }
+    .modal-bienvenida__fortaleza-texto {
+      font-size: 0.72rem;
+      font-family: 'DM Sans', sans-serif;
+      color: #888;
+      min-width: 55px;
+    }
+
+    /* Enlace alternativo (¿ya tienes cuenta? / ¿no tienes cuenta?) */
+    .modal-bienvenida__link-alterno {
+      text-align: center;
+      font-size: 0.82rem;
+      color: #888;
+      margin-top: 1rem;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .modal-bienvenida__link-btn {
+      background: none;
+      border: none;
+      color: var(--color-verde-oscuro);
+      font-weight: 700;
+      cursor: pointer;
+      padding: 0;
+      font-family: 'DM Sans', sans-serif;
+      font-size: inherit;
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    .modal-bienvenida__link-btn:hover { color: var(--color-verde); }
+
+    /* Spinner de carga dentro del botón */
+    .modal-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2.5px solid rgba(0,0,0,0.2);
+      border-top-color: var(--color-negro);
+      border-radius: 50%;
+      animation: girar 0.7s linear infinite;
+    }
+    @keyframes girar { to { transform: rotate(360deg); } }
+
+    /* ── TOAST de acceso restringido ── */
+    .toast-acceso {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(120%);
+      background: var(--color-negro);
+      color: #fff;
+      border-radius: 14px;
+      padding: 0.9rem 1rem 0.9rem 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      z-index: 11000;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      max-width: 480px;
+      width: calc(100% - 2rem);
+      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+      font-family: 'DM Sans', sans-serif;
+    }
+    .toast-acceso.visible {
+      transform: translateX(-50%) translateY(0);
+    }
+    .toast-acceso__icono {
+      color: var(--color-verde);
+      flex-shrink: 0;
+    }
+    .toast-acceso__texto {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+    .toast-acceso__texto strong { font-size: 0.88rem; }
+    .toast-acceso__texto span   { font-size: 0.78rem; color: #aaa; }
+    .toast-acceso__btn {
+      background: var(--color-verde);
+      color: var(--color-negro);
+      border: none;
+      border-radius: 7px;
+      padding: 0.45rem 0.85rem;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.78rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .toast-acceso__btn:hover { background: var(--color-verde-oscuro); }
+    .toast-acceso__cerrar {
+      background: none;
+      border: none;
+      color: #666;
+      font-size: 1.3rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0 0.2rem;
+      transition: color 0.2s;
+    }
+    .toast-acceso__cerrar:hover { color: #fff; }
+
+    /* ── Responsive: móvil ── */
+    @media (max-width: 480px) {
+      .modal-bienvenida__pantalla { padding: 1.5rem 1.4rem 1.8rem; }
+      .modal-bienvenida__grupo-auth { grid-template-columns: 1fr; }
+      .modal-bienvenida__caja { border-radius: 16px; }
+      .toast-acceso { flex-wrap: wrap; }
+    }
+
     /* Reset */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -472,6 +951,88 @@
     }
 
 
+    /* ── Botón flotante WhatsApp ── */
+    .btn-whatsapp-flotante {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: #25D366;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.75rem 1.2rem 0.75rem 1rem;
+      border-radius: 50px;
+      box-shadow: 0 6px 24px rgba(37,211,102,0.45);
+      text-decoration: none;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .btn-whatsapp-flotante:hover {
+      transform: translateY(-3px) scale(1.04);
+      box-shadow: 0 10px 32px rgba(37,211,102,0.55);
+      color: #fff;
+    }
+    .btn-whatsapp-flotante__etiqueta { white-space: nowrap; }
+
+    /* ── Caja WhatsApp en sección contacto ── */
+    .contacto-whatsapp-box {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 1rem;
+    }
+    .contacto-whatsapp-icono {
+      background: #e8faf0;
+      border-radius: 50%;
+      width: 90px;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .contacto-whatsapp-titulo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.4rem;
+      color: var(--color-negro);
+      margin: 0;
+    }
+    .contacto-whatsapp-texto {
+      color: #666;
+      font-size: 0.95rem;
+      max-width: 320px;
+      margin: 0;
+    }
+    .btn-whatsapp-contacto {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: #25D366;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 0.85rem 2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 4px 18px rgba(37,211,102,0.4);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      margin-top: 0.5rem;
+    }
+    .btn-whatsapp-contacto:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(37,211,102,0.55);
+      color: #fff;
+    }
+
     /* Footer */
     .pie-pagina {
       background: var(--color-negro); padding: 3rem 0 1.5rem;
@@ -542,6 +1103,316 @@
   <!-- Cursor -->
   <div class="cursor-punto"  id="cursorPunto"></div>
   <div class="cursor-anillo" id="cursorAnillo"></div>
+
+  <!-- ============================================================
+       MODAL DE BIENVENIDA — Immersive Aguachica
+       Muestra opciones de acceso al cargar la página por primera vez.
+       Se almacena la elección en localStorage para no repetirla
+       durante la misma sesión de navegación.
+  ============================================================ -->
+  <div id="modalBienvenida" class="modal-bienvenida" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+    <!-- Fondo oscurecido (backdrop) -->
+    <div class="modal-bienvenida__backdrop" id="modalBackdrop"></div>
+
+    <!-- Contenedor principal del modal -->
+    <div class="modal-bienvenida__caja" id="modalCaja">
+
+      <!-- Decoración visual superior (franja de color de marca) -->
+      <div class="modal-bienvenida__franja"></div>
+
+      <!-- ── PANTALLA 1: Bienvenida con opciones de acceso ── -->
+      <div id="pantallaBienvenida" class="modal-bienvenida__pantalla activa">
+
+        <!-- Logo -->
+        <div class="modal-bienvenida__logo">
+          <img src="img/logo.png" alt="Logo Immersive Aguachica" />
+        </div>
+
+        <!-- Título y descripción -->
+        <h1 class="modal-bienvenida__titulo" id="modalTitulo">
+          Bienvenido a<br><span class="modal-bienvenida__titulo--resaltado">Immersive Aguachica</span>
+        </h1>
+        <p class="modal-bienvenida__descripcion">
+          Explora la riqueza cultural, histórica y turística de Aguachica mediante
+          experiencias inmersivas, recorridos 360° y modelos 3D interactivos.
+        </p>
+
+        <!-- Separador decorativo -->
+        <div class="modal-bienvenida__separador"></div>
+
+        <!-- Bloque de botones de acceso -->
+        <div class="modal-bienvenida__acciones">
+
+          <!-- Botón: Entrar como visitante -->
+          <button
+            id="btnVisitante"
+            class="modal-bienvenida__btn modal-bienvenida__btn--visitante"
+            onclick="ImmersiveAuth.entrarComoVisitante()"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
+            Entrar como visitante
+          </button>
+
+          <!-- Divisor visual entre opciones -->
+          <div class="modal-bienvenida__divisor-opciones">
+            <span>o accede con tu cuenta</span>
+          </div>
+
+          <!-- Grupo: Login y Registro -->
+          <div class="modal-bienvenida__grupo-auth">
+            <button
+              id="btnLogin"
+              class="modal-bienvenida__btn modal-bienvenida__btn--login"
+              onclick="ImmersiveAuth.mostrarPantalla('pantallaLogin')"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
+              </svg>
+              Iniciar sesión
+            </button>
+            <button
+              id="btnRegistro"
+              class="modal-bienvenida__btn modal-bienvenida__btn--registro"
+              onclick="ImmersiveAuth.mostrarPantalla('pantallaRegistro')"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>
+              </svg>
+              Registrarse
+            </button>
+          </div>
+        </div>
+      </div><!-- /pantallaBienvenida -->
+
+
+      <!-- ── PANTALLA 2: Formulario de Login ── -->
+      <div id="pantallaLogin" class="modal-bienvenida__pantalla">
+
+        <!-- Botón volver -->
+        <button class="modal-bienvenida__btn-volver" onclick="ImmersiveAuth.mostrarPantalla('pantallaBienvenida')" aria-label="Volver">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+          Volver
+        </button>
+
+        <h2 class="modal-bienvenida__subtitulo">Iniciar sesión</h2>
+        <p class="modal-bienvenida__descripcion modal-bienvenida__descripcion--sm">
+          Accede a contenido exclusivo: modelos 3D y recorridos 360°.
+        </p>
+
+        <!-- Formulario de login -->
+        <!-- La acción real se gestiona vía fetch a POST /api/login -->
+        <div class="modal-bienvenida__form" id="formLoginContenedor">
+
+          <!-- Mensaje de error/éxito -->
+          <div id="loginMensaje" class="modal-bienvenida__alerta" style="display:none;" role="alert"></div>
+
+          <!-- Campo: Correo -->
+          <div class="modal-bienvenida__campo">
+            <label for="loginCorreo">Correo electrónico</label>
+            <input
+              type="email"
+              id="loginCorreo"
+              placeholder="correo@ejemplo.com"
+              autocomplete="email"
+              required
+            />
+            <span class="modal-bienvenida__campo-error" id="loginCorreoError"></span>
+          </div>
+
+          <!-- Campo: Contraseña -->
+          <div class="modal-bienvenida__campo">
+            <label for="loginPassword">Contraseña</label>
+            <div class="modal-bienvenida__campo-password">
+              <input
+                type="password"
+                id="loginPassword"
+                placeholder="Tu contraseña"
+                autocomplete="current-password"
+                required
+              />
+              <!-- Toggle mostrar/ocultar contraseña -->
+              <button type="button" class="btn-toggle-password" onclick="ImmersiveAuth.togglePassword('loginPassword', this)" aria-label="Mostrar contraseña">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            <span class="modal-bienvenida__campo-error" id="loginPasswordError"></span>
+          </div>
+
+          <!-- Botón enviar login -->
+          <button
+            id="btnIngresar"
+            class="modal-bienvenida__btn modal-bienvenida__btn--submit"
+            onclick="ImmersiveAuth.submitLogin()"
+          >
+            <span id="btnIngresarTexto">Ingresar</span>
+            <!-- Spinner de carga -->
+            <span id="btnIngresarSpinner" class="modal-spinner" style="display:none;" aria-hidden="true"></span>
+          </button>
+
+          <!-- Enlace a registro -->
+          <p class="modal-bienvenida__link-alterno">
+            ¿No tienes cuenta?
+            <button class="modal-bienvenida__link-btn" onclick="ImmersiveAuth.mostrarPantalla('pantallaRegistro')">Regístrate aquí</button>
+          </p>
+        </div>
+      </div><!-- /pantallaLogin -->
+
+
+      <!-- ── PANTALLA 3: Formulario de Registro ── -->
+      <div id="pantallaRegistro" class="modal-bienvenida__pantalla">
+
+        <!-- Botón volver -->
+        <button class="modal-bienvenida__btn-volver" onclick="ImmersiveAuth.mostrarPantalla('pantallaBienvenida')" aria-label="Volver">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+          Volver
+        </button>
+
+        <h2 class="modal-bienvenida__subtitulo">Crear cuenta</h2>
+        <p class="modal-bienvenida__descripcion modal-bienvenida__descripcion--sm">
+          Regístrate para disfrutar de todos los contenidos exclusivos.
+        </p>
+
+        <!-- Formulario de registro -->
+        <!-- La acción real se gestiona vía fetch a POST /api/register -->
+        <div class="modal-bienvenida__form" id="formRegistroContenedor">
+
+          <!-- Mensaje de error/éxito -->
+          <div id="registroMensaje" class="modal-bienvenida__alerta" style="display:none;" role="alert"></div>
+
+          <!-- Campo: Nombre -->
+          <div class="modal-bienvenida__campo">
+            <label for="registroNombre">Nombre(s)</label>
+            <input
+              type="text"
+              id="registroNombre"
+              placeholder="Ej: Carlos Andrés"
+              autocomplete="given-name"
+              required
+            />
+            <span class="modal-bienvenida__campo-error" id="registroNombreError"></span>
+          </div>
+
+          <!-- Campo: Apellidos -->
+          <div class="modal-bienvenida__campo">
+            <label for="registroApellidos">Apellidos</label>
+            <input
+              type="text"
+              id="registroApellidos"
+              placeholder="Ej: García López"
+              autocomplete="family-name"
+              required
+            />
+            <span class="modal-bienvenida__campo-error" id="registroApellidosError"></span>
+          </div>
+
+          <!-- Campo: Correo -->
+          <div class="modal-bienvenida__campo">
+            <label for="registroCorreo">Correo electrónico</label>
+            <input
+              type="email"
+              id="registroCorreo"
+              placeholder="correo@ejemplo.com"
+              autocomplete="email"
+              required
+            />
+            <span class="modal-bienvenida__campo-error" id="registroCorreoError"></span>
+          </div>
+
+          <!-- Campo: Contraseña -->
+          <div class="modal-bienvenida__campo">
+            <label for="registroPassword">Contraseña</label>
+            <div class="modal-bienvenida__campo-password">
+              <input
+                type="password"
+                id="registroPassword"
+                placeholder="Mínimo 8 caracteres"
+                autocomplete="new-password"
+                required
+              />
+              <button type="button" class="btn-toggle-password" onclick="ImmersiveAuth.togglePassword('registroPassword', this)" aria-label="Mostrar contraseña">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            <span class="modal-bienvenida__campo-error" id="registroPasswordError"></span>
+          </div>
+
+          <!-- Campo: Confirmar contraseña -->
+          <div class="modal-bienvenida__campo">
+            <label for="registroConfirmar">Confirmar contraseña</label>
+            <div class="modal-bienvenida__campo-password">
+              <input
+                type="password"
+                id="registroConfirmar"
+                placeholder="Repite tu contraseña"
+                autocomplete="new-password"
+                required
+              />
+              <button type="button" class="btn-toggle-password" onclick="ImmersiveAuth.togglePassword('registroConfirmar', this)" aria-label="Mostrar contraseña">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            <span class="modal-bienvenida__campo-error" id="registroConfirmarError"></span>
+          </div>
+
+          <!-- Indicador de fortaleza de contraseña -->
+          <div class="modal-bienvenida__fortaleza" id="fortalezaContenedor" style="display:none;">
+            <div class="modal-bienvenida__fortaleza-barra">
+              <div id="fortalezaBarra" class="modal-bienvenida__fortaleza-progreso"></div>
+            </div>
+            <span id="fortalezaTexto" class="modal-bienvenida__fortaleza-texto"></span>
+          </div>
+
+          <!-- Botón enviar registro -->
+          <button
+            id="btnRegistrarse"
+            class="modal-bienvenida__btn modal-bienvenida__btn--submit"
+            onclick="ImmersiveAuth.submitRegistro()"
+          >
+            <span id="btnRegistrarseTexto">Registrarse</span>
+            <span id="btnRegistrarseSpinner" class="modal-spinner" style="display:none;" aria-hidden="true"></span>
+          </button>
+
+          <!-- Enlace a login -->
+          <p class="modal-bienvenida__link-alterno">
+            ¿Ya tienes cuenta?
+            <button class="modal-bienvenida__link-btn" onclick="ImmersiveAuth.mostrarPantalla('pantallaLogin')">Inicia sesión</button>
+          </p>
+        </div>
+      </div><!-- /pantallaRegistro -->
+
+    </div><!-- /modal-caja -->
+  </div><!-- /modal-bienvenida -->
+
+
+  <!-- ============================================================
+       TOAST: Notificación para visitantes que intentan acceder
+       a contenido exclusivo sin haber iniciado sesión.
+  ============================================================ -->
+  <div id="toastAccesoRestringido" class="toast-acceso" role="alert" aria-live="assertive" style="display:none;">
+    <div class="toast-acceso__icono">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+    </div>
+    <div class="toast-acceso__texto">
+      <strong>Contenido exclusivo</strong>
+      <span>Inicia sesión para acceder a los recorridos 360° y modelos 3D.</span>
+    </div>
+    <button class="toast-acceso__btn" onclick="ImmersiveAuth.abrirModalDesdeToast()">Iniciar sesión</button>
+    <button class="toast-acceso__cerrar" onclick="ImmersiveAuth.cerrarToast()" aria-label="Cerrar">×</button>
+  </div>
   
 
   <!-- Navegación -->
@@ -562,6 +1433,19 @@
           <li class="nav-item"><a class="nav-link" href="#objetivos">Proyecto</a></li>
           <li class="nav-item"><a class="nav-link" href="#qr">Tour 360°</a></li>
           <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+          <li class="nav-item ms-lg-2" id="nav-btn-login">
+            <button onclick="ImmersiveAuth.abrirModalDesdeToast()"
+               class="btn-base btn-contorno" style="font-size:0.72rem; padding: 0.55rem 1.2rem;">
+              Iniciar sesión
+            </button>
+          </li>
+          <li class="nav-item ms-lg-2" id="nav-btn-usuario" style="display:none;">
+            <span id="nav-nombre-usuario" style="font-family:'DM Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--color-verde); padding:0 0.5rem;"></span>
+            <button onclick="ImmersiveAuth.cerrarSesion()"
+               class="btn-base btn-contorno" style="font-size:0.7rem; padding: 0.45rem 1rem;">
+              Salir
+            </button>
+          </li>
           <li class="nav-item ms-lg-3">
             <a href="modelos.html" target="_blank" rel="noopener"
                class="btn-base btn-relleno" style="font-size:0.72rem; padding: 0.6rem 1.4rem;">
@@ -813,22 +1697,23 @@
           </div>
         </div>
 
-        <div>
-          <form action="/contacto" method="POST">
-            <div class="campo-formulario">
-              <label for="nombre">Nombre completo</label>
-              <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required />
-            </div>
-            <div class="campo-formulario">
-              <label for="correo">Correo electrónico</label>
-              <input type="email" id="correo" name="correo" placeholder="correo@ejemplo.com" required />
-            </div>
-            <div class="campo-formulario">
-              <label for="mensaje">Mensaje</label>
-              <textarea id="mensaje" name="mensaje" placeholder="Escribe tu mensaje aquí…" required></textarea>
-            </div>
-            <button type="submit" class="btn-enviar">Enviar mensaje</button>
-          </form>
+        <div class="contacto-whatsapp-box">
+          <div class="contacto-whatsapp-icono">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="56" height="56" fill="#25D366">
+              <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
+            </svg>
+          </div>
+          <h4 class="contacto-whatsapp-titulo">¡Escríbenos directo por WhatsApp!</h4>
+          <p class="contacto-whatsapp-texto">Responderemos tus preguntas, sugerencias o comentarios sobre Immersive Aguachica.</p>
+          <a href="https://wa.me/573217795593?text=Hola%2C%20me%20interesa%20saber%20m%C3%A1s%20sobre%20Immersive%20Aguachica%20%F0%9F%8C%8D"
+             target="_blank"
+             rel="noopener"
+             class="btn-whatsapp-contacto">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="20" height="20" fill="currentColor">
+              <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
+            </svg>
+            Chatear por WhatsApp
+          </a>
         </div>
 
       </div>
@@ -920,7 +1805,589 @@
         : 'none';
     });
 
+
+    /* ============================================================
+       IMMERSIVE AUTH — Sistema de autenticación modal
+       Gestiona: modal de bienvenida, login, registro, acceso
+       exclusivo y localStorage de sesión.
+
+       COMPATIBILIDAD:
+         - GitHub Pages (sin backend): modo simulado
+         - Node.js backend futuro: fetch a /api/login y /api/register
+    ============================================================ */
+    const ImmersiveAuth = (() => {
+
+      /* ── Configuración ── */
+      // Cambiar a true cuando el backend Node.js esté disponible
+      const BACKEND_DISPONIBLE = true;
+      const API_BASE = '';  // Vacío = mismo servidor (localhost:3000)
+
+      // Clave usada en localStorage para recordar el estado de sesión
+      const CLAVE_SESION = 'immersive_sesion_estado';
+
+      /* ── Estado interno ── */
+      let estadoUsuario = {
+        tipo: null,       // 'visitante' | 'autenticado'
+        nombre: null,
+        correo: null,
+        token: null
+      };
+
+      /* ── Referencias al DOM ── */
+      const modal     = () => document.getElementById('modalBienvenida');
+      const caja      = () => document.getElementById('modalCaja');
+      const toast     = () => document.getElementById('toastAccesoRestringido');
+
+      /* ──────────────────────────────────────────────
+         INICIALIZACIÓN: se ejecuta al cargar la página
+      ────────────────────────────────────────────── */
+      function init() {
+        const sesionGuardada = leerSesion();
+
+        // Solo suprimir el modal si hay una sesión válida guardada:
+        //   - autenticado con token real del backend, o
+        //   - visitante que ya eligió entrar como tal en esta sesión
+        const esAutenticadoReal = sesionGuardada
+          && sesionGuardada.tipo === 'autenticado'
+          && sesionGuardada.token
+          && !sesionGuardada.token.startsWith('token-simulado-');
+
+        const esVisitanteActivo = sesionGuardada
+          && sesionGuardada.tipo === 'visitante';
+
+        if (esAutenticadoReal || esVisitanteActivo) {
+          estadoUsuario = sesionGuardada;
+          aplicarEstadoUI();
+        } else {
+          // Limpiar cualquier sesión residual y mostrar el modal
+          sessionStorage.removeItem(CLAVE_SESION);
+          // Asegurar que la pantalla de bienvenida esté activa
+          document.querySelectorAll('.modal-bienvenida__pantalla').forEach(p => p.classList.remove('activa'));
+          const pantallaBienvenida = document.getElementById('pantallaBienvenida');
+          if (pantallaBienvenida) pantallaBienvenida.classList.add('activa');
+          setTimeout(() => abrirModal(), 300);
+        }
+
+        // Interceptar clics en enlaces de contenido exclusivo
+        document.querySelectorAll('[href="modelos.html"], .btn-tour, .tarjeta-lugar__enlace')
+          .forEach(el => {
+            el.addEventListener('click', e => manejarAccesoExclusivo(e, el));
+          });
+
+        // Cerrar modal si el usuario hace clic en el backdrop
+        document.getElementById('modalBackdrop')?.addEventListener('click', () => {
+          // Sólo cerrar si ya hay un estado guardado (no en primera visita sin elección)
+          if (estadoUsuario.tipo) cerrarModal();
+        });
+
+        // Indicador de fortaleza de contraseña al escribir
+        document.getElementById('registroPassword')?.addEventListener('input', e => {
+          evaluarFortaleza(e.target.value);
+        });
+      }
+
+
+      /* ──────────────────────────────────────────────
+         MODAL: abrir / cerrar / cambiar pantalla
+      ────────────────────────────────────────────── */
+
+      function abrirModal() {
+        const m = modal();
+        if (!m) return;
+        document.body.style.overflow = 'hidden'; // evitar scroll de fondo
+        m.classList.add('visible');
+        // Foco accesible: mover al primer elemento interactivo del modal
+        setTimeout(() => m.querySelector('button, input')?.focus(), 450);
+      }
+
+      function cerrarModal() {
+        const m = modal();
+        if (!m) return;
+        m.classList.remove('visible');
+        document.body.style.overflow = '';
+      }
+
+      function mostrarPantalla(idPantalla) {
+        // Ocultar todas las pantallas y activar la solicitada
+        document.querySelectorAll('.modal-bienvenida__pantalla').forEach(p => {
+          p.classList.remove('activa');
+        });
+        const pantalla = document.getElementById(idPantalla);
+        if (pantalla) {
+          pantalla.classList.add('activa');
+          // Mover el foco al primer input o botón de la nueva pantalla
+          setTimeout(() => pantalla.querySelector('input, button')?.focus(), 50);
+        }
+        // Limpiar mensajes de error de formularios al cambiar pantalla
+        limpiarErrores();
+      }
+
+
+      /* ──────────────────────────────────────────────
+         ACCESO COMO VISITANTE
+      ────────────────────────────────────────────── */
+
+      function entrarComoVisitante() {
+        estadoUsuario = { tipo: 'visitante', nombre: 'Visitante', correo: null, token: 'visitante' };
+        // Guardar en sessionStorage para no mostrar el modal de nuevo en esta sesión de navegador
+        guardarSesion(estadoUsuario);
+        cerrarModal();
+        aplicarEstadoUI();
+        mostrarNotificacionBienvenida('¡Bienvenido! Puedes explorar los lugares turísticos libremente.');
+      }
+
+
+      /* ──────────────────────────────────────────────
+         FORMULARIO DE LOGIN
+      ────────────────────────────────────────────── */
+
+      async function submitLogin() {
+        // 1. Limpiar errores previos
+        limpiarErrores('login');
+
+        // 2. Obtener valores
+        const correo   = document.getElementById('loginCorreo')?.value.trim();
+        const password = document.getElementById('loginPassword')?.value;
+
+        // 3. Validaciones básicas en cliente
+        let hayErrores = false;
+
+        if (!correo || !validarEmail(correo)) {
+          mostrarErrorCampo('loginCorreo', 'loginCorreoError', 'Ingresa un correo válido.');
+          hayErrores = true;
+        }
+        if (!password || password.length < 6) {
+          mostrarErrorCampo('loginPassword', 'loginPasswordError', 'La contraseña debe tener al menos 6 caracteres.');
+          hayErrores = true;
+        }
+        if (hayErrores) return;
+
+        // 4. Enviar petición
+        toggleBtnCarga('btnIngresar', 'btnIngresarTexto', 'btnIngresarSpinner', true);
+
+        try {
+          if (BACKEND_DISPONIBLE) {
+            // ── Conexión real al backend Node.js ──
+            const res = await fetch(`${API_BASE}/api/login`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ correo, password })
+            });
+
+            // Parsear respuesta de forma segura
+            const texto = await res.text();
+            let data = {};
+            try { data = JSON.parse(texto); } catch (_) {
+              throw new Error('El servidor no respondió correctamente. Verifica que esté corriendo.');
+            }
+
+            if (!res.ok) {
+              throw new Error(data.mensaje || 'Credenciales incorrectas.');
+            }
+
+            // Login exitoso
+            estadoUsuario = { tipo: 'autenticado', nombre: data.nombre, correo: data.correo, token: data.token };
+            guardarSesion(estadoUsuario);
+            cerrarModal();
+            aplicarEstadoUI();
+            mostrarNotificacionBienvenida(`¡Bienvenido, ${data.nombre}! Tienes acceso completo.`);
+
+          } else {
+            // ── Modo simulado (GitHub Pages / sin backend) ──
+            await simularDelay(1200);
+            // Simulamos un usuario de prueba
+            const usuarioPrueba = { nombre: extraerNombreDeCorreo(correo), correo, token: 'token-simulado-' + Date.now() };
+            estadoUsuario = { tipo: 'autenticado', ...usuarioPrueba };
+            guardarSesion(estadoUsuario);
+            cerrarModal();
+            aplicarEstadoUI();
+            mostrarNotificacionBienvenida(`¡Bienvenido, ${usuarioPrueba.nombre}! (Modo demostración)`);
+          }
+
+        } catch (err) {
+          mostrarAlertaFormulario('loginMensaje', err.message || 'Error al iniciar sesión. Intenta de nuevo.', 'error');
+        } finally {
+          toggleBtnCarga('btnIngresar', 'btnIngresarTexto', 'btnIngresarSpinner', false);
+        }
+      }
+
+
+      /* ──────────────────────────────────────────────
+         FORMULARIO DE REGISTRO
+      ────────────────────────────────────────────── */
+
+      async function submitRegistro() {
+        limpiarErrores('registro');
+
+        const nombre    = document.getElementById('registroNombre')?.value.trim();
+        const apellidos = document.getElementById('registroApellidos')?.value.trim();
+        const correo    = document.getElementById('registroCorreo')?.value.trim();
+        const password  = document.getElementById('registroPassword')?.value;
+        const confirmar = document.getElementById('registroConfirmar')?.value;
+
+        // Validaciones
+        let hayErrores = false;
+
+        if (!nombre || nombre.length < 2) {
+          mostrarErrorCampo('registroNombre', 'registroNombreError', 'Ingresa tu nombre.');
+          hayErrores = true;
+        }
+        if (!apellidos || apellidos.length < 2) {
+          mostrarErrorCampo('registroApellidos', 'registroApellidosError', 'Ingresa tus apellidos.');
+          hayErrores = true;
+        }
+        if (!correo || !validarEmail(correo)) {
+          mostrarErrorCampo('registroCorreo', 'registroCorreoError', 'Ingresa un correo válido.');
+          hayErrores = true;
+        }
+        if (!password || password.length < 8) {
+          mostrarErrorCampo('registroPassword', 'registroPasswordError', 'La contraseña debe tener al menos 8 caracteres.');
+          hayErrores = true;
+        }
+        if (password !== confirmar) {
+          mostrarErrorCampo('registroConfirmar', 'registroConfirmarError', 'Las contraseñas no coinciden.');
+          hayErrores = true;
+        }
+        if (hayErrores) return;
+
+        toggleBtnCarga('btnRegistrarse', 'btnRegistrarseTexto', 'btnRegistrarseSpinner', true);
+
+        try {
+          if (BACKEND_DISPONIBLE) {
+            // ── Conexión real al backend Node.js ──
+            const res = await fetch(`${API_BASE}/api/register`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ nombre, apellidos, correo, password })
+            });
+
+            // Parsear respuesta de forma segura
+            const texto = await res.text();
+            let data = {};
+            try { data = JSON.parse(texto); } catch (_) {
+              throw new Error('El servidor no respondió correctamente. Verifica que esté corriendo.');
+            }
+
+            if (!res.ok) {
+              throw new Error(data.mensaje || 'No se pudo completar el registro.');
+            }
+
+            // Registro + login automático
+            estadoUsuario = { tipo: 'autenticado', nombre: data.nombre || nombre, correo, token: data.token };
+            guardarSesion(estadoUsuario);
+            cerrarModal();
+            aplicarEstadoUI();
+            mostrarNotificacionBienvenida(`¡Registro exitoso! Bienvenido, ${nombre}.`);
+
+          } else {
+            // ── Modo simulado ──
+            await simularDelay(1500);
+            mostrarAlertaFormulario(
+              'registroMensaje',
+              '✓ Registro completado (modo demostración). En producción se enviará un correo de confirmación.',
+              'exito'
+            );
+            setTimeout(() => {
+              estadoUsuario = { tipo: 'autenticado', nombre, correo, token: 'token-demo-' + Date.now() };
+              guardarSesion(estadoUsuario);
+              cerrarModal();
+              aplicarEstadoUI();
+              mostrarNotificacionBienvenida(`¡Bienvenido, ${nombre}! Tu cuenta ha sido creada.`);
+            }, 1800);
+          }
+
+        } catch (err) {
+          mostrarAlertaFormulario('registroMensaje', err.message || 'Error al registrarse. Intenta de nuevo.', 'error');
+        } finally {
+          toggleBtnCarga('btnRegistrarse', 'btnRegistrarseTexto', 'btnRegistrarseSpinner', false);
+        }
+      }
+
+
+      /* ──────────────────────────────────────────────
+         CONTROL DE ACCESO A CONTENIDO EXCLUSIVO
+         Intercepta clics a modelos.html / tour / etc.
+      ────────────────────────────────────────────── */
+
+      function manejarAccesoExclusivo(evento, elemento) {
+        // Si ya está autenticado → dejar pasar normalmente
+        if (estadoUsuario.tipo === 'autenticado') return;
+
+        // Visitante o sin sesión → bloquear y mostrar aviso
+        evento.preventDefault();
+        mostrarToastAccesoRestringido();
+      }
+
+      function mostrarToastAccesoRestringido() {
+        const t = toast();
+        if (!t) return;
+        t.style.display = 'flex';
+        // Forzar reflow para que la transición CSS se active
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => t.classList.add('visible'));
+        });
+        // Auto-cerrar después de 6 segundos
+        setTimeout(() => cerrarToast(), 6000);
+      }
+
+      function cerrarToast() {
+        const t = toast();
+        if (!t) return;
+        t.classList.remove('visible');
+        setTimeout(() => { t.style.display = 'none'; }, 450);
+      }
+
+      function abrirModalDesdeToast() {
+        cerrarToast();
+        mostrarPantalla('pantallaLogin');
+        abrirModal();
+      }
+
+
+      /* ──────────────────────────────────────────────
+         UI: reflejar el estado del usuario en la página
+      ────────────────────────────────────────────── */
+
+      function aplicarEstadoUI() {
+        const btnLogin   = document.getElementById('nav-btn-login');
+        const btnUsuario = document.getElementById('nav-btn-usuario');
+        const nomUsuario = document.getElementById('nav-nombre-usuario');
+
+        if (estadoUsuario.tipo === 'autenticado') {
+          if (btnLogin)   btnLogin.style.display   = 'none';
+          if (btnUsuario) btnUsuario.style.display  = '';
+          if (nomUsuario) nomUsuario.textContent    = '👤 ' + (estadoUsuario.nombre || 'Usuario');
+          document.querySelectorAll('[data-solo-autenticado]').forEach(el => { el.style.display = ''; });
+        } else {
+          if (btnLogin)   btnLogin.style.display   = '';
+          if (btnUsuario) btnUsuario.style.display  = 'none';
+        }
+      }
+
+      function mostrarNotificacionBienvenida(mensaje) {
+        // Crear un toast temporal de bienvenida usando Bootstrap si está disponible
+        const div = document.createElement('div');
+        div.style.cssText = `
+          position:fixed; top:1.5rem; right:1.5rem; z-index:11000;
+          background:var(--color-negro); color:#fff;
+          padding:0.85rem 1.2rem; border-radius:10px;
+          font-family:'DM Sans',sans-serif; font-size:0.85rem;
+          box-shadow:0 8px 24px rgba(0,0,0,0.3);
+          border-left:4px solid var(--color-verde);
+          max-width:320px; opacity:0;
+          transition:opacity 0.4s ease, transform 0.4s ease;
+          transform:translateY(-10px);
+        `;
+        div.textContent = mensaje;
+        document.body.appendChild(div);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            div.style.opacity = '1';
+            div.style.transform = 'translateY(0)';
+          });
+        });
+        setTimeout(() => {
+          div.style.opacity = '0';
+          div.style.transform = 'translateY(-10px)';
+          setTimeout(() => div.remove(), 400);
+        }, 4000);
+      }
+
+
+      /* ──────────────────────────────────────────────
+         UTILIDADES DE FORMULARIO
+      ────────────────────────────────────────────── */
+
+      function mostrarErrorCampo(idInput, idError, mensaje) {
+        const input = document.getElementById(idInput);
+        const span  = document.getElementById(idError);
+        if (input) input.classList.add('campo-invalido');
+        if (span)  span.textContent = mensaje;
+      }
+
+      function mostrarAlertaFormulario(idMensaje, texto, tipo) {
+        const el = document.getElementById(idMensaje);
+        if (!el) return;
+        el.textContent = texto;
+        el.className = `modal-bienvenida__alerta modal-bienvenida__alerta--${tipo}`;
+        el.style.display = 'block';
+      }
+
+      function limpiarErrores(formulario) {
+        const prefijos = formulario ? [formulario] : ['login', 'registro'];
+        prefijos.forEach(p => {
+          document.querySelectorAll(`#pantalla${capitalizar(p)} .campo-invalido`).forEach(el => el.classList.remove('campo-invalido'));
+          document.querySelectorAll(`#pantalla${capitalizar(p)} .modal-bienvenida__campo-error`).forEach(el => el.textContent = '');
+          const alerta = document.getElementById(`${p}Mensaje`);
+          if (alerta) alerta.style.display = 'none';
+        });
+      }
+
+      function toggleBtnCarga(idBtn, idTexto, idSpinner, cargando) {
+        const btn     = document.getElementById(idBtn);
+        const texto   = document.getElementById(idTexto);
+        const spinner = document.getElementById(idSpinner);
+        if (!btn) return;
+        btn.disabled         = cargando;
+        if (texto)   texto.style.display   = cargando ? 'none' : 'inline';
+        if (spinner) spinner.style.display = cargando ? 'inline-block' : 'none';
+      }
+
+      function togglePassword(idInput, boton) {
+        const input = document.getElementById(idInput);
+        if (!input) return;
+        const esPassword = input.type === 'password';
+        input.type = esPassword ? 'text' : 'password';
+        // Cambiar ícono
+        boton.innerHTML = esPassword
+          ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+               <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+               <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+               <line x1="1" y1="1" x2="23" y2="23"/>
+             </svg>`
+          : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+             </svg>`;
+      }
+
+      function evaluarFortaleza(password) {
+        const contenedor = document.getElementById('fortalezaContenedor');
+        const barra      = document.getElementById('fortalezaBarra');
+        const texto      = document.getElementById('fortalezaTexto');
+        if (!contenedor || !barra || !texto) return;
+
+        if (!password) { contenedor.style.display = 'none'; return; }
+        contenedor.style.display = 'flex';
+
+        let puntos = 0;
+        if (password.length >= 8)   puntos++;
+        if (password.length >= 12)  puntos++;
+        if (/[A-Z]/.test(password)) puntos++;
+        if (/[0-9]/.test(password)) puntos++;
+        if (/[^A-Za-z0-9]/.test(password)) puntos++;
+
+        const niveles = [
+          { ancho: '20%',  color: '#e74c3c', label: 'Débil' },
+          { ancho: '40%',  color: '#e67e22', label: 'Regular' },
+          { ancho: '60%',  color: '#f1c40f', label: 'Aceptable' },
+          { ancho: '80%',  color: '#2ecc71', label: 'Fuerte' },
+          { ancho: '100%', color: '#27ae60', label: 'Muy fuerte' }
+        ];
+        const nivel = niveles[Math.min(puntos - 1, 4)] || niveles[0];
+        barra.style.width      = nivel.ancho;
+        barra.style.background = nivel.color;
+        texto.textContent      = nivel.label;
+        texto.style.color      = nivel.color;
+      }
+
+
+      /* ──────────────────────────────────────────────
+         UTILIDADES GENERALES
+      ────────────────────────────────────────────── */
+
+      function validarEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      }
+
+      function simularDelay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      function capitalizar(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+      }
+
+      function extraerNombreDeCorreo(correo) {
+        const parte = correo.split('@')[0].replace(/[._-]/g, ' ');
+        return parte.replace(/\b\w/g, c => c.toUpperCase());
+      }
+
+
+      /* ──────────────────────────────────────────────
+         PERSISTENCIA EN localStorage
+         Se guarda el estado de la sesión de navegación.
+         El token real (cuando haya backend) debe manejarse
+         con httpOnly cookies en producción.
+      ────────────────────────────────────────────── */
+
+      function guardarSesion(estado) {
+        try {
+          const datos = JSON.stringify(estado);
+          if (estado.tipo === 'autenticado') {
+            // Autenticado: persistir en localStorage (survives tab close)
+            localStorage.setItem(CLAVE_SESION, datos);
+          } else {
+            // Visitante: solo durante esta pestaña
+            sessionStorage.setItem(CLAVE_SESION, datos);
+          }
+        } catch (e) {
+          console.warn('No se pudo guardar la sesión:', e);
+        }
+      }
+
+      function leerSesion() {
+        try {
+          // Primero intentar sessionStorage (sesión activa de visitante o auth reciente)
+          const datosSS = sessionStorage.getItem(CLAVE_SESION);
+          if (datosSS) return JSON.parse(datosSS);
+          // Luego localStorage (autenticado que cerró y volvió a abrir)
+          const datosLS = localStorage.getItem(CLAVE_SESION);
+          return datosLS ? JSON.parse(datosLS) : null;
+        } catch (e) {
+          return null;
+        }
+      }
+
+
+      /* ──────────────────────────────────────────────
+         CERRAR SESIÓN
+      ────────────────────────────────────────────── */
+
+      function cerrarSesion() {
+        estadoUsuario = { tipo: null, nombre: null, correo: null, token: null };
+        // Limpiar ambos storages por seguridad
+        try { sessionStorage.removeItem(CLAVE_SESION); } catch (_) {}
+        try { localStorage.removeItem(CLAVE_SESION); } catch (_) {}
+        aplicarEstadoUI();
+        // Mostrar el modal de bienvenida de nuevo
+        document.querySelectorAll('.modal-bienvenida__pantalla').forEach(p => p.classList.remove('activa'));
+        const pantallaBienvenida = document.getElementById('pantallaBienvenida');
+        if (pantallaBienvenida) pantallaBienvenida.classList.add('activa');
+        setTimeout(() => abrirModal(), 150);
+      }
+
+
+      /* ── Exponer métodos públicos ── */
+      return {
+        init,
+        entrarComoVisitante,
+        mostrarPantalla,
+        submitLogin,
+        submitRegistro,
+        cerrarSesion,
+        togglePassword,
+        cerrarToast,
+        abrirModalDesdeToast
+      };
+
+    })(); // fin del módulo ImmersiveAuth
+
+
+    /* Arrancar el sistema de autenticación cuando el DOM esté listo */
+    document.addEventListener('DOMContentLoaded', () => ImmersiveAuth.init());
+
   </script>
+  <!-- Botón flotante WhatsApp -->
+  <a href="https://wa.me/573217795593?text=Hola%2C%20me%20interesa%20saber%20m%C3%A1s%20sobre%20Immersive%20Aguachica%20%F0%9F%8C%8D"
+     target="_blank"
+     rel="noopener"
+     class="btn-whatsapp-flotante"
+     aria-label="Contactar por WhatsApp">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="30" height="30" fill="white">
+      <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
+    </svg>
+    <span class="btn-whatsapp-flotante__etiqueta">¿Hablamos?</span>
+  </a>
 
 </body>
 </html>
