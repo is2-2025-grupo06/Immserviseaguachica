@@ -1,6 +1,6 @@
 # Immserviseaguachica 🏛️
 
-> Plataforma de turismo cultural interactivo con modelos 3D para el municipio de Aguachica, Colombia — MVP desarrollado para IS2 2025 Grupo 06.
+> Plataforma de turismo cultural interactivo con modelos 3D para el municipio de Aguachica, Colombia — MVP desarrollado para IS2 2026 Grupo 06.
 
 [![HTML](https://img.shields.io/badge/Frontend-HTML%2FCSS%2FJS-orange?style=flat-square&logo=html5)](https://developer.mozilla.org/en-US/docs/Web/HTML)
 [![Node.js](https://img.shields.io/badge/Backend-Node.js-green?style=flat-square&logo=node.js)](https://nodejs.org/)
