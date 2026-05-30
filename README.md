@@ -1,2 +1,0 @@
-# -mvp-proyecto
-Repositorio mvp
