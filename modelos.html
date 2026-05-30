@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Modelos 3D · Immersive Aguachica</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+ 
+  <style>
+    :root {
+      --verde: #8cd211;
+      --verde-dark: #6dab0f;
+      --crema: #F2F1EB;
+      --negro: #0e0e0e;
+      --negro2: #141414;
+      --gris: #333333;
+    }
+ 
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+ 
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--negro);
+      color: white;
+      overflow-x: hidden;
+    }
+ 
+    /* ── CURSOR ── */
+    .cursor-dot {
+      width: 8px; height: 8px; background: var(--verde);
+      border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999;
+      transform: translate(-50%, -50%); transition: transform 0.1s;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px; border: 2px solid var(--verde);
+      border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.18s ease, width 0.3s, height 0.3s, opacity 0.3s;
+      opacity: 0.5;
+    }
+ 
+    /* ── NAVBAR ── */
+    .navbar {
+      background-color: var(--crema);
+      padding: 0.4rem 0;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .navbar-brand img { height: 70px; width: auto; }
+    .back-link {
+      font-family: 'DM Sans', sans-serif; font-weight: 700;
+      font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--gris) !important; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.5rem 1.2rem; border: 1.5px solid rgba(0,0,0,0.15);
+      border-radius: 3px; transition: all 0.3s;
+    }
+    .back-link:hover {
+      background: var(--negro); color: white !important;
+      border-color: var(--negro);
+    }
+ 
+    /* ── PAGE HEADER ── */
+    .page-header {
+      background: var(--negro);
+      padding: 6rem 0 4rem;
+      position: relative; overflow: hidden;
+    }
+    .page-header::before {
+      content: '3D';
+      position: absolute; right: -3rem; top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22rem; color: rgba(255,255,255,0.02);
+      pointer-events: none; line-height: 1;
+      white-space: nowrap;
+    }
+    /* grid lines background */
+    .page-header::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(140,210,17,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(140,210,17,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+    .page-header-content { position: relative; z-index: 1; }
+ 
+    .page-eyebrow {
+      font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--verde); font-weight: 700;
+      display: inline-flex; align-items: center; gap: 0.6rem; margin-bottom: 1rem;
+    }
+    .page-eyebrow::before {
+      content: ''; display: inline-block;
+      width: 24px; height: 2px; background: var(--verde);
+    }
+    .page-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 8vw, 7rem);
+      line-height: 0.95; color: white; letter-spacing: 0.02em;
+    }
+    .page-title span { color: var(--verde); }
+    .page-sub {
+      font-size: 1rem; color: rgba(255,255,255,0.45);
+      max-width: 480px; margin-top: 1.2rem; line-height: 1.7; font-weight: 300;
+    }
+ 
+    /* ── MODEL SECTION ── */
+    .models-section { padding: 0 0 6rem; background: var(--negro); }
+ 
+    .model-block {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 5rem 0;
+      position: relative;
+    }
+    .model-block:last-child { border-bottom: 1px solid rgba(255,255,255,0.06); }
+ 
+    .model-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 8rem; color: rgba(255,255,255,0.03);
+      position: absolute; top: 3rem; right: 1rem;
+      line-height: 1; pointer-events: none; user-select: none;
+    }
+ 
+    .model-label {
+      font-size: 0.68rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--verde); font-weight: 700; margin-bottom: 0.4rem;
+    }
+    .model-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      color: white; line-height: 1; margin-bottom: 0.8rem;
+    }
+    .model-desc {
+      font-size: 0.88rem; color: rgba(255,255,255,0.45);
+      line-height: 1.8; font-weight: 300; max-width: 360px;
+      margin-bottom: 2rem;
+    }
+    .model-meta {
+      display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;
+    }
+    .model-tag {
+      font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(255,255,255,0.3); font-weight: 700;
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 0.35rem 0.9rem; border-radius: 2px;
+    }
+    .model-tag.active {
+      color: var(--verde); border-color: rgba(140,210,17,0.3);
+      background: rgba(140,210,17,0.06);
+    }
+ 
+    /* model-viewer wrapper */
+    .viewer-wrap {
+      position: relative;
+      background: #111;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .viewer-wrap::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 30% 30%, rgba(140,210,17,0.06) 0%, transparent 60%);
+      pointer-events: none; z-index: 0;
+    }
+    model-viewer {
+      width: 100%; height: 440px;
+      display: block; position: relative; z-index: 1;
+      --poster-color: transparent;
+    }
+ 
+    /* viewer controls hint */
+    .viewer-hint {
+      position: absolute; bottom: 1rem; left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: rgba(255,255,255,0.25); pointer-events: none;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .viewer-hint::before,
+    .viewer-hint::after {
+      content: ''; display: inline-block;
+      width: 20px; height: 1px; background: rgba(255,255,255,0.15);
+    }
+ 
+    /* ── INFO CARDS (below viewer) ── */
+    .info-pill {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 40px; padding: 0.5rem 1rem;
+      font-size: 0.75rem; color: rgba(255,255,255,0.4);
+    }
+    .info-pill span { color: var(--verde); font-weight: 700; }
+ 
+    /* ── PROVISIONAL BANNER ── */
+    .provisional-banner {
+      background: rgba(140,210,17,0.07);
+      border: 1px solid rgba(140,210,17,0.18);
+      border-radius: 6px;
+      padding: 1.2rem 1.8rem;
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 4rem;
+    }
+    .provisional-banner-icon {
+      font-size: 1.5rem; flex-shrink: 0;
+    }
+    .provisional-banner p {
+      font-size: 0.85rem; color: rgba(255,255,255,0.5);
+      margin: 0; line-height: 1.6;
+    }
+    .provisional-banner strong { color: var(--verde); }
+ 
+    /* ── CTA SECTION ── */
+    .cta-section {
+      background: var(--negro2);
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding: 5rem 0;
+      text-align: center;
+    }
+    .cta-section h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 5vw, 4rem); color: white; margin-bottom: 1rem;
+    }
+    .cta-section p {
+      color: rgba(255,255,255,0.4); font-size: 0.95rem; margin-bottom: 2rem; max-width: 420px; margin-left: auto; margin-right: auto;
+    }
+    .btn-cta {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: var(--verde); color: white;
+      font-family: 'DM Sans', sans-serif; font-weight: 700;
+      font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 0.9rem 2.2rem; border-radius: 3px; text-decoration: none;
+      transition: all 0.3s; border: 2px solid var(--verde);
+    }
+    .btn-cta:hover {
+      background: transparent; color: var(--verde);
+      transform: translateY(-2px); box-shadow: 0 8px 30px rgba(140,210,17,0.2);
+    }
+    .btn-cta-outline {
+      background: transparent; color: rgba(255,255,255,0.5);
+      border-color: rgba(255,255,255,0.12);
+    }
+    .btn-cta-outline:hover {
+      background: rgba(255,255,255,0.05); color: white;
+      border-color: rgba(255,255,255,0.25); box-shadow: none;
+    }
+ 
+    /* ── FOOTER ── */
+    footer {
+      background: var(--negro);
+      border-top: 1px solid rgba(255,255,255,0.04);
+      padding: 2rem 0;
+    }
+    .footer-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-inner p { font-size: 0.75rem; color: rgba(255,255,255,0.2); letter-spacing: 0.08em; }
+    .footer-inner a {
+      font-size: 0.75rem; color: rgba(255,255,255,0.3);
+      text-decoration: none; transition: color 0.3s;
+    }
+    .footer-inner a:hover { color: var(--verde); }
+ 
+    /* ── ANIMATIONS ── */
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in { animation: fadeSlideUp 0.7s ease both; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+ 
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      model-viewer { height: 300px; }
+      .model-block { padding: 3.5rem 0; }
+    }
+  </style>
+</head>
+<body>
+ 
+<!-- CURSOR -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+ 
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="container d-flex justify-content-between align-items-center">
+    <a class="navbar-brand" href="index.html">
+      <img src="img/logo.png" alt="Immersive Aguachica" />
+    </a>
+    <a href="index.html" class="back-link">
+      ← Volver al inicio
+    </a>
+  </div>
+</nav>
+ 
+<!-- PAGE HEADER -->
+<header class="page-header">
+  <div class="container page-header-content">
+    <div class="page-eyebrow fade-in">Galería Interactiva</div>
+    <h1 class="page-title fade-in delay-1">
+      Modelos<br><span>3D</span>
+    </h1>
+    <p class="page-sub fade-in delay-2">
+      Explora representaciones digitales tridimensionales de los lugares y símbolos más emblemáticos de Aguachica, Cesar. Rota, acerca y examina cada detalle.
+    </p>
+  </div>
+</header>
+ 
+<!-- MODELS -->
+<section class="models-section">
+  <div class="container">
+    <div class="provisional-banner fade-in delay-3">
+      <div class="provisional-banner-icon">🔧</div>
+      <p><strong>Modelos en desarrollo:</strong> Estos modelos son versiones provisionales en construcción. Estamos trabajando en mayor detalle y fidelidad para la versión final del proyecto.</p>
+    </div>
+ 
+    <!-- MODELO 1: MORROCOY -->
+    <div class="model-block">
+      <div class="model-num">01</div>
+      <div class="row align-items-center g-5">
+        <div class="col-lg-4">
+          <p class="model-label">Fauna · Símbolo</p>
+          <h2 class="model-name">Morrocoy del<br>Parque Morrocoy</h2>
+          <p class="model-desc">
+            La tortuga morrocoy es el símbolo vivo del parque que lleva su nombre. Un ícono de la identidad aguachiquense, presente en la memoria colectiva del municipio.
+          </p>
+          <div class="model-meta">
+            <span class="model-tag active">🐢 Fauna local</span>
+            <span class="model-tag active">Blender</span>
+            <span class="model-tag">.glb</span>
+          </div>
+          <div class="info-pill">
+            <span>Interactivo:</span> Arrastra para rotar · Pellizca para zoom
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="viewer-wrap">
+            <model-viewer
+              src="models/tortuga.glb"
+              alt="Modelo 3D del morrocoy — tortuga símbolo de Aguachica"
+              auto-rotate
+              camera-controls
+              shadow-intensity="1.2"
+              environment-image="neutral"
+              exposure="1.1"
+              style="--progress-bar-color: #8cd211;">
+            </model-viewer>
+            <div class="viewer-hint">Interactivo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- MODELO 2: IGLESIA -->
+    <div class="model-block">
+      <div class="model-num">02</div>
+      <div class="row align-items-center g-5 flex-lg-row-reverse">
+        <div class="col-lg-4">
+          <p class="model-label">Arquitectura · Historia</p>
+          <h2 class="model-name">Iglesia<br>San Roque</h2>
+          <p class="model-desc">
+            La Iglesia San Roque es uno de los edificios más representativos del Parque San Roque. Su arquitectura es testigo de la historia religiosa y cultural del municipio.
+          </p>
+          <div class="model-meta">
+            <span class="model-tag active">🏛️ Patrimonio</span>
+            <span class="model-tag active">Blender</span>
+            <span class="model-tag">.glb</span>
+          </div>
+          <div class="info-pill">
+            <span>Interactivo:</span> Arrastra para rotar · Pellizca para zoom
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="viewer-wrap">
+            <model-viewer
+              src="models/iglesia_sanroque.glb"
+              alt="Modelo 3D de la Iglesia San Roque"
+              auto-rotate
+              camera-controls
+              shadow-intensity="1.2"
+              environment-image="neutral"
+              exposure="1.1"
+              style="--progress-bar-color: #8cd211;">
+            </model-viewer>
+            <div class="viewer-hint">Interactivo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- MODELO 3: PATRÓN -->
+    <div class="model-block">
+      <div class="model-num">03</div>
+      <div class="row align-items-center g-5">
+        <div class="col-lg-4">
+          <p class="model-label">Escultura · Tradición</p>
+          <h2 class="model-name">Patrón<br>San Roque</h2>
+          <p class="model-desc">
+            San Roque es el patrono del municipio. Esta escultura representa la devoción y fe del pueblo aguachiquense, presente en las festividades y en el corazón del parque central.
+          </p>
+          <div class="model-meta">
+            <span class="model-tag active">⛪ Religioso</span>
+            <span class="model-tag active">Blender</span>
+            <span class="model-tag">.glb</span>
+          </div>
+          <div class="info-pill">
+            <span>Interactivo:</span> Arrastra para rotar · Pellizca para zoom
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="viewer-wrap">
+            <model-viewer
+              src="models/patron_sanroque.glb"
+              alt="Modelo 3D del Patrón San Roque — escultura"
+              auto-rotate
+              camera-controls
+              shadow-intensity="1.2"
+              environment-image="neutral"
+              exposure="1.1"
+              style="--progress-bar-color: #8cd211;">
+            </model-viewer>
+            <div class="viewer-hint">Interactivo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+  </div>
+</section>
+ 
+<!-- CTA -->
+<div class="cta-section">
+  <div class="container">
+    <h2>¿Listo para el<br>Tour 360°?</h2>
+    <p>Explora Aguachica de manera inmersiva con nuestros recorridos virtuales panorámicos.</p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+      <a href="index.html/#qr" class="btn-cta">
+        Ver Tour Virtual
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+      <a href="index.html" class="btn-cta btn-cta-outline">
+        Volver al inicio
+      </a>
+    </div>
+  </div>
+</div>
+ 
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <p>© 2025 Immersive Aguachica · Aguachica, Cesar, Colombia</p>
+      <a href="index.html">Inicio</a>
+    </div>
+  </div>
+</footer>
+ 
+<script>
+  /* Custom cursor */
+  const dot = document.getElementById('cursorDot');
+  const ring = document.getElementById('cursorRing');
+  let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+ 
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX; mouseY = e.clientY;
+    dot.style.left = mouseX + 'px'; dot.style.top = mouseY + 'px';
+  });
+ 
+  (function animateRing() {
+    ringX += (mouseX - ringX) * 0.12;
+    ringY += (mouseY - ringY) * 0.12;
+    ring.style.left = ringX + 'px'; ring.style.top = ringY + 'px';
+    requestAnimationFrame(animateRing);
+  })();
+ 
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      ring.style.width = '56px'; ring.style.height = '56px'; ring.style.opacity = '0.3';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.width = '36px'; ring.style.height = '36px'; ring.style.opacity = '0.5';
+    });
+  });
+</script>
+</body>
+</html>
+ 
