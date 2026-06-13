@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Tour Virtual 360° · Immersive Aguachica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0c0c0a;
+    --bg-soft:#171712;
+    --panel:#1d1f16;
+    --accent:#b6e62a;
+    --accent-dim:#1f2b08;
+    --text:#f4f1ea;
+    --text-muted:#9c9a90;
+    --border:rgba(244,241,234,.08);
+    --radius:14px;
+    --crema:#F2F1EB;
+    --gris:#333333;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html,body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Inter",sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  h1,h2,h3,.display{
+    font-family:"Anton",sans-serif;
+    text-transform:uppercase;
+    letter-spacing:.02em;
+    line-height:1;
+  }
+
+  .eyebrow{
+    display:inline-block;
+    font-size:.72rem;
+    font-weight:700;
+    letter-spacing:.32em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin-bottom:.9rem;
+  }
+
+  a{color:inherit;text-decoration:none;}
+
+  /* ---------- NAV (estilo del html modelo) ---------- */
+  .navbar{
+    background-color: var(--crema);
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .navbar-brand img{ height: 70px; width: auto; }
+  .back-link{
+    font-family: 'Inter', sans-serif; font-weight: 700;
+    font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--gris) !important; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.5rem 1.2rem; border: 1.5px solid rgba(0,0,0,0.15);
+    border-radius: 3px; transition: all 0.3s;
+  }
+  .back-link:hover{
+    background: var(--bg); color: var(--crema) !important;
+    border-color: var(--bg);
+  }
+
+  /* ---------- HERO TOUR HEADER ---------- */
+  .tour-head{
+    padding:3.5rem 6vw 2.4rem;
+    border-bottom:1px solid var(--border);
+  }
+
+  .tour-head h1{
+    font-size:clamp(2.4rem,7vw,4.4rem);
+    margin-bottom:.9rem;
+  }
+
+  .tour-head h1 .accent{color:var(--accent);}
+
+  .tour-head p{
+    max-width:46ch;
+    color:var(--text-muted);
+    font-size:1rem;
+    line-height:1.65;
+  }
+
+  /* ---------- TABS ---------- */
+  .tour-tabs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.75rem;
+    margin-top:2rem;
+  }
+
+  .tour-tab{
+    display:flex;
+    align-items:center;
+    gap:.65rem;
+    padding:.85rem 1.4rem;
+    border:1px solid var(--border);
+    border-radius:999px;
+    background:var(--bg-soft);
+    color:var(--text-muted);
+    font-weight:700;
+    font-size:.8rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:.2s ease;
+  }
+
+  .tour-tab svg{width:18px;height:18px;flex-shrink:0;}
+  .tour-tab .tour-tab-sub{
+    font-weight:400;
+    text-transform:none;
+    letter-spacing:0;
+    color:var(--text-muted);
+    font-size:.78rem;
+  }
+
+  .tour-tab:hover{border-color:var(--accent);color:var(--text);}
+
+  .tour-tab.active{
+    background:var(--accent-dim);
+    border-color:var(--accent);
+    color:var(--accent);
+  }
+  .tour-tab.active .tour-tab-sub{color:var(--text);}
+
+  /* ---------- VIEWER ---------- */
+  .viewer-section{
+    padding:2.4rem 6vw 1rem;
+  }
+
+  .viewer-stage{
+    position:relative;
+    width:100%;
+    height:62vh;
+    min-height:320px;
+    max-height:680px;
+    border-radius:var(--radius);
+    overflow:hidden;
+    background:#000;
+    border:1px solid var(--border);
+    touch-action:none;
+    cursor:grab;
+  }
+
+  .viewer-stage:active{cursor:grabbing;}
+
+  @media (min-width:860px){
+    .viewer-stage{height:74vh;}
+  }
+
+  .viewer-stage canvas{
+    display:block;
+    width:100%;
+    height:100%;
+  }
+
+  /* loader */
+  .viewer-loader{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:.8rem;
+    background:#0c0c0a;
+    z-index:5;
+    transition:opacity .4s ease;
+    text-align:center;
+    padding:1rem;
+  }
+
+  .viewer-loader.hidden{opacity:0;pointer-events:none;}
+
+  .spinner{
+    width:34px;height:34px;
+    border-radius:50%;
+    border:3px solid var(--border);
+    border-top-color:var(--accent);
+    animation:spin 1s linear infinite;
+  }
+
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .viewer-loader p{
+    font-size:.8rem;
+    color:var(--text-muted);
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    font-weight:600;
+  }
+  .viewer-loader .note{
+    max-width:32ch;
+    font-size:.72rem;
+    letter-spacing:.03em;
+    text-transform:none;
+    color:var(--text-muted);
+    opacity:.75;
+  }
+
+  /* drag hint */
+  .drag-hint{
+    position:absolute;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    z-index:4;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:.6rem;
+    padding:1.1rem 1.6rem;
+    background:rgba(12,12,10,.55);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    backdrop-filter:blur(6px);
+    text-align:center;
+    pointer-events:none;
+    transition:opacity .5s ease;
+  }
+  .drag-hint.hidden{opacity:0;}
+  .drag-hint svg{width:30px;height:30px;color:var(--accent);}
+  .drag-hint span{
+    font-size:.74rem;
+    font-weight:600;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--text);
+  }
+
+  /* top-left badge */
+  .viewer-badge{
+    position:absolute;
+    top:1rem;left:1rem;
+    z-index:6;
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+    padding:.5rem .9rem;
+    background:rgba(12,12,10,.55);
+    border:1px solid var(--border);
+    border-radius:999px;
+    backdrop-filter:blur(6px);
+    font-size:.7rem;
+    font-weight:700;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--text);
+  }
+  .viewer-badge .pulse{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 10px var(--accent);
+    animation:pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+
+  /* compass */
+  .compass{
+    position:absolute;
+    top:1rem;right:1rem;
+    z-index:6;
+    width:56px;height:56px;
+    border-radius:50%;
+    background:rgba(12,12,10,.55);
+    border:1px solid var(--border);
+    backdrop-filter:blur(6px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .compass-inner{
+    position:relative;
+    width:100%;height:100%;
+  }
+  .compass-deg{
+    position:absolute;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    font-size:.62rem;
+    font-weight:700;
+    color:var(--accent);
+    letter-spacing:.05em;
+    z-index:2;
+    pointer-events:none;
+  }
+  .compass-needle{
+    position:absolute;
+    inset:0;
+    transform:rotate(0deg);
+    transition:transform .05s linear;
+  }
+  .compass-needle::before{
+    content:"";
+    position:absolute;
+    top:6px;left:50%;
+    transform:translateX(-50%);
+    width:0;height:0;
+    border-left:5px solid transparent;
+    border-right:5px solid transparent;
+    border-bottom:9px solid var(--accent);
+  }
+
+  /* controls bar */
+  .viewer-controls{
+    position:absolute;
+    bottom:1rem;left:1rem;right:1rem;
+    z-index:6;
+    display:flex;
+    flex-wrap:wrap;
+    gap:.6rem;
+    align-items:center;
+    justify-content:space-between;
+  }
+
+  .control-group{
+    display:flex;
+    gap:.5rem;
+    flex-wrap:wrap;
+  }
+
+  .ctrl-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:.5rem;
+    padding:.6rem .95rem;
+    background:rgba(12,12,10,.6);
+    border:1px solid var(--border);
+    border-radius:999px;
+    color:var(--text);
+    font-size:.72rem;
+    font-weight:700;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    cursor:pointer;
+    backdrop-filter:blur(6px);
+    transition:.2s ease;
+  }
+  .ctrl-btn svg{width:16px;height:16px;}
+  .ctrl-btn:hover{border-color:var(--accent);}
+  .ctrl-btn.on{
+    background:var(--accent);
+    color:#101205;
+    border-color:var(--accent);
+  }
+
+  /* ---------- INSTRUCTIONS ---------- */
+  .how-section{
+    padding:3.5rem 6vw 4.5rem;
+  }
+
+  .how-grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:1px;
+    background:var(--border);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    overflow:hidden;
+    margin-top:2rem;
+  }
+
+  @media (min-width:760px){
+    .how-grid{grid-template-columns:repeat(3,1fr);}
+  }
+
+  .how-card{
+    background:var(--bg-soft);
+    padding:1.8rem;
+  }
+
+  .how-card .icon{
+    width:38px;height:38px;
+    border-radius:10px;
+    background:var(--accent-dim);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:1.1rem;
+  }
+  .how-card .icon svg{width:20px;height:20px;color:var(--accent);}
+
+  .how-card h3{
+    font-size:1rem;
+    font-weight:700;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    font-family:"Inter",sans-serif;
+    margin-bottom:.5rem;
+  }
+
+  .how-card p{
+    font-size:.85rem;
+    line-height:1.6;
+    color:var(--text-muted);
+  }
+
+  .how-head h2{
+    font-size:clamp(1.8rem,4.5vw,2.6rem);
+  }
+  .how-head{max-width:50ch;}
+  .how-head p{
+    margin-top:.8rem;
+    color:var(--text-muted);
+    font-size:.95rem;
+    line-height:1.6;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    padding:2.2rem 6vw;
+    border-top:1px solid var(--border);
+    display:flex;
+    flex-wrap:wrap;
+    gap:1rem;
+    align-items:center;
+    justify-content:space-between;
+    font-size:.75rem;
+    color:var(--text-muted);
+  }
+  footer a{color:var(--accent);font-weight:600;}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar">
+  <div class="container d-flex justify-content-between align-items-center">
+    <a class="navbar-brand" href="index.html">
+      <img src="img/logo.png" alt="Immersive Aguachica" />
+    </a>
+    <a href="index.html" class="back-link">
+      ← Volver al inicio
+    </a>
+  </div>
+</nav>
+
+
+<!-- HEADER -->
+<header class="tour-head">
+  <span class="eyebrow">Experiencia inmersiva</span>
+  <h1>Tour virtual <span class="accent">360°</span></h1>
+  <p>Explora Aguachica desde adentro. Arrastra con el dedo o el mouse para mirar alrededor, o activa el sensor de movimiento para recorrer el video con tu celular como si estuvieras ahí.</p>
+
+  <div class="tour-tabs">
+    <button class="tour-tab active" data-tour="san-roque">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/><path d="M12 3v3"/></svg>
+      Parque San Roque <span class="tour-tab-sub">· Plaza histórica</span>
+    </button>
+    <button class="tour-tab" data-tour="morrocoy">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>
+      Parque Morrocoy <span class="tour-tab-sub">· Punto de tradición</span>
+    </button>
+  </div>
+</header>
+
+<!-- VIEWER -->
+<section class="viewer-section">
+  <div class="viewer-stage" id="stage">
+    <canvas id="canvas"></canvas>
+
+    <div class="viewer-loader" id="loader">
+      <div class="spinner"></div>
+      <p>Cargando experiencia 360°</p>
+      <p class="note">Si no carga, agrega tus videos 360° en la carpeta <strong>/videos/</strong> con los nombres indicados en el código.</p>
+    </div>
+
+    <div class="viewer-badge"><span class="pulse"></span> En vivo · 360°</div>
+
+    <div class="compass">
+      <div class="compass-inner">
+        <span class="compass-deg" id="compassDeg">0°</span>
+        <div class="compass-needle" id="compassNeedle"></div>
+      </div>
+    </div>
+
+    <div class="drag-hint" id="dragHint">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l-3 3 3 3"/><path d="M15 11l3 3-3 3"/><path d="M12 2v20"/></svg>
+      <span>Arrastra para mirar alrededor</span>
+    </div>
+
+    <div class="viewer-controls">
+      <div class="control-group">
+        <button class="ctrl-btn" id="playBtn" aria-label="Reproducir o pausar">
+          <svg viewBox="0 0 24 24" fill="currentColor" id="playIcon"><path d="M8 5v14l11-7z"/></svg>
+          Pausa
+        </button>
+        <button class="ctrl-btn" id="muteBtn" aria-label="Silenciar o activar audio">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" id="muteIcon"><path d="M11 5 6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+          Sonido
+        </button>
+      </div>
+      <div class="control-group">
+        <button class="ctrl-btn" id="gyroBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
+          Giroscopio
+        </button>
+        <button class="ctrl-btn" id="fullscreenBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+          Pantalla completa
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSTRUCTIONS -->
+<section class="how-section">
+  <div class="how-head">
+    <span class="eyebrow">Cómo explorar</span>
+    <h2>Controla tu recorrido</h2>
+    <p>El tour funciona en cualquier dispositivo. En computador, usa el mouse para girar la cámara; en celular, desliza con el dedo o activa el sensor de movimiento para mirar simplemente moviendo el teléfono.</p>
+  </div>
+
+  <div class="how-grid">
+    <div class="how-card">
+      <div class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l-3 3 3 3"/><path d="M15 11l3 3-3 3"/><path d="M12 2v20"/></svg>
+      </div>
+      <h3>Arrastra para mirar</h3>
+      <p>Haz clic y arrastra (o desliza con el dedo) dentro del video para girar la vista 360° en cualquier dirección.</p>
+    </div>
+    <div class="how-card">
+      <div class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
+      </div>
+      <h3>Activa el giroscopio</h3>
+      <p>En tu celular, toca el botón "Giroscopio" y permite el acceso al sensor de movimiento. Mueve tu teléfono para explorar la escena.</p>
+    </div>
+    <div class="how-card">
+      <div class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+      </div>
+      <h3>Pantalla completa</h3>
+      <p>Usa el botón de pantalla completa para una experiencia más inmersiva, especialmente recomendado con auriculares.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Immersive Aguachica · Todos los derechos reservados</span>
+  <span>Hecho con Blender · HTML · CSS · JS · <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a></span>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  const stage   = document.getElementById('stage');
+  const canvas  = document.getElementById('canvas');
+  const loader  = document.getElementById('loader');
+  const dragHint= document.getElementById('dragHint');
+  const compassNeedle = document.getElementById('compassNeedle');
+  const compassDeg    = document.getElementById('compassDeg');
+
+  const playBtn = document.getElementById('playBtn');
+  const muteBtn = document.getElementById('muteBtn');
+  const gyroBtn = document.getElementById('gyroBtn');
+  const fsBtn   = document.getElementById('fullscreenBtn');
+
+  /* ----------------------------------------------------
+     360° VIDEO SOURCES
+     Reemplaza estas rutas por tus propios videos 360°
+     equirectangulares (formato 2:1). Colócalos dentro
+     de una carpeta /videos/ junto a este archivo.
+  ---------------------------------------------------- */
+  const tours = {
+    'san-roque': {
+      src: 'videos/tour-parque-san-roque-360.mp4',
+      label: 'Parque San Roque'
+    },
+    'morrocoy': {
+      src: 'videos/tour-parque-morrocoy-360.mp4',
+      label: 'Parque Morrocoy'
+    }
+  };
+
+  /* Build hidden video elements + textures for each tour */
+  const videoEls = {};
+  const textures = {};
+  Object.keys(tours).forEach(key => {
+    const v = document.createElement('video');
+    v.src = tours[key].src;
+    v.crossOrigin = 'anonymous';
+    v.loop = true;
+    v.muted = true;
+    v.playsInline = true;
+    v.setAttribute('webkit-playsinline', 'true');
+    v.preload = 'auto';
+    videoEls[key] = v;
+
+    const tex = new THREE.VideoTexture(v);
+    tex.format = THREE.RGBFormat;
+    if (THREE.sRGBEncoding) tex.encoding = THREE.sRGBEncoding;
+    textures[key] = tex;
+  });
+
+  /* ----------------------------------------------------
+     THREE.JS SCENE
+  ---------------------------------------------------- */
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, 1, 1, 1100);
+
+  const geometry = new THREE.SphereGeometry(500, 60, 40);
+  geometry.scale(-1, 1, 1); // view from inside the sphere
+
+  let currentTour = 'san-roque';
+  const material = new THREE.MeshBasicMaterial({ map: textures[currentTour] });
+  const mesh = new THREE.Mesh(geometry, material);
+  scene.add(mesh);
+
+  function resize(){
+    const w = stage.clientWidth;
+    const h = stage.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize);
+
+  /* ----------------------------------------------------
+     MANUAL DRAG CONTROLS (mouse + touch)
+  ---------------------------------------------------- */
+  let lon = 180, lat = 0;
+  let isPointerDown = false;
+  let startX = 0, startY = 0, startLon = 0, startLat = 0;
+
+  function pointerDown(x, y){
+    isPointerDown = true;
+    startX = x; startY = y;
+    startLon = lon; startLat = lat;
+    dragHint.classList.add('hidden');
+  }
+  function pointerMove(x, y){
+    if (!isPointerDown || gyroActive) return;
+    lon = (startX - x) * 0.18 + startLon;
+    lat = (y - startY) * 0.18 + startLat;
+    lat = Math.max(-85, Math.min(85, lat));
+  }
+  function pointerUp(){ isPointerDown = false; }
+
+  canvas.addEventListener('mousedown', e => pointerDown(e.clientX, e.clientY));
+  window.addEventListener('mousemove', e => pointerMove(e.clientX, e.clientY));
+  window.addEventListener('mouseup', pointerUp);
+
+  canvas.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    pointerDown(t.clientX, t.clientY);
+  }, { passive: true });
+  canvas.addEventListener('touchmove', e => {
+    const t = e.touches[0];
+    pointerMove(t.clientX, t.clientY);
+  }, { passive: true });
+  canvas.addEventListener('touchend', pointerUp);
+
+  /* ----------------------------------------------------
+     GYROSCOPE (DEVICE ORIENTATION) CONTROLS
+  ---------------------------------------------------- */
+  let gyroActive = false;
+  let deviceOrientation = null;
+  let screenOrientationAngle = (window.screen.orientation && window.screen.orientation.angle) || window.orientation || 0;
+
+  function onDeviceOrientation(event){
+    deviceOrientation = event;
+  }
+  window.addEventListener('orientationchange', () => {
+    screenOrientationAngle = (window.screen.orientation && window.screen.orientation.angle) || window.orientation || 0;
+  });
+
+  const ZEE = new THREE.Vector3(0, 0, 1);
+  const EULER = new THREE.Euler();
+  const Q0 = new THREE.Quaternion();
+  const Q1 = new THREE.Quaternion(-Math.sqrt(0.5), 0, 0, Math.sqrt(0.5)); // align world to camera
+
+  function setQuaternionFromOrientation(quaternion, alpha, beta, gamma, orient){
+    EULER.set(beta, alpha, -gamma, 'YXZ');
+    quaternion.setFromEuler(EULER);
+    quaternion.multiply(Q1);
+    quaternion.multiply(Q0.setFromAxisAngle(ZEE, -orient));
+  }
+
+  async function enableGyro(){
+    const DOE = window.DeviceOrientationEvent;
+    if (!DOE){
+      alert('Tu dispositivo o navegador no soporta el sensor de orientación.');
+      return;
+    }
+    if (typeof DOE.requestPermission === 'function'){
+      try {
+        const res = await DOE.requestPermission();
+        if (res !== 'granted'){
+          alert('Permiso de movimiento denegado. Activa el sensor desde la configuración del navegador.');
+          return;
+        }
+      } catch (err){
+        alert('No se pudo solicitar permiso para el sensor de movimiento.');
+        return;
+      }
+    }
+    window.addEventListener('deviceorientation', onDeviceOrientation, true);
+    gyroActive = true;
+    gyroBtn.classList.add('on');
+    dragHint.classList.add('hidden');
+  }
+
+  function disableGyro(){
+    window.removeEventListener('deviceorientation', onDeviceOrientation, true);
+    gyroActive = false;
+    gyroBtn.classList.remove('on');
+  }
+
+  gyroBtn.addEventListener('click', () => {
+    if (gyroActive) disableGyro();
+    else enableGyro();
+  });
+
+  /* ----------------------------------------------------
+     RENDER LOOP
+  ---------------------------------------------------- */
+  function updateCompass(headingDeg){
+    let deg = ((headingDeg % 360) + 360) % 360;
+    compassNeedle.style.transform = `rotate(${-deg}deg)`;
+    compassDeg.textContent = Math.round(deg) + '°';
+  }
+
+  function animate(){
+    requestAnimationFrame(animate);
+
+    if (gyroActive && deviceOrientation && deviceOrientation.alpha !== null){
+      const alpha = THREE.MathUtils.degToRad(deviceOrientation.alpha);
+      const beta  = THREE.MathUtils.degToRad(deviceOrientation.beta);
+      const gamma = THREE.MathUtils.degToRad(deviceOrientation.gamma);
+      const orient = THREE.MathUtils.degToRad(screenOrientationAngle);
+      setQuaternionFromOrientation(camera.quaternion, alpha, beta, gamma, orient);
+      updateCompass(deviceOrientation.alpha || 0);
+    } else {
+      const phi = THREE.MathUtils.degToRad(90 - lat);
+      const theta = THREE.MathUtils.degToRad(lon);
+      const target = new THREE.Vector3();
+      target.x = 500 * Math.sin(phi) * Math.cos(theta);
+      target.y = 500 * Math.cos(phi);
+      target.z = 500 * Math.sin(phi) * Math.sin(theta);
+      camera.position.set(0, 0, 0);
+      camera.lookAt(target);
+      updateCompass(lon);
+    }
+
+    renderer.render(scene, camera);
+  }
+
+  /* ----------------------------------------------------
+     PLAY / PAUSE / MUTE
+  ---------------------------------------------------- */
+  let isPlaying = true;
+  let isMuted = true;
+
+  const playIcon = document.getElementById('playIcon');
+  const muteIcon = document.getElementById('muteIcon');
+
+  function activeVideo(){ return videoEls[currentTour]; }
+
+  playBtn.addEventListener('click', () => {
+    const v = activeVideo();
+    if (isPlaying){ v.pause(); isPlaying = false; playBtn.lastChild.textContent = 'Reproducir'; playIcon.innerHTML = '<rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/>'; }
+    else { v.play(); isPlaying = true; playBtn.lastChild.textContent = 'Pausa'; playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>'; }
+  });
+
+  muteBtn.addEventListener('click', () => {
+    isMuted = !isMuted;
+    Object.values(videoEls).forEach(v => v.muted = isMuted);
+    muteBtn.classList.toggle('on', !isMuted);
+    muteBtn.lastChild.textContent = isMuted ? 'Sonido' : 'Silenciar';
+  });
+
+  /* ----------------------------------------------------
+     FULLSCREEN
+  ---------------------------------------------------- */
+  fsBtn.addEventListener('click', () => {
+    if (!document.fullscreenElement){
+      stage.requestFullscreen?.() || stage.webkitRequestFullscreen?.();
+    } else {
+      document.exitFullscreen?.() || document.webkitExitFullscreen?.();
+    }
+  });
+  document.addEventListener('fullscreenchange', resize);
+
+  /* ----------------------------------------------------
+     TOUR SWITCHING
+  ---------------------------------------------------- */
+  const tabs = document.querySelectorAll('.tour-tab');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const key = tab.dataset.tour;
+      if (key === currentTour) return;
+
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      videoEls[currentTour].pause();
+      currentTour = key;
+
+      material.map = textures[currentTour];
+      material.needsUpdate = true;
+
+      showLoader();
+      const v = activeVideo();
+      v.muted = isMuted;
+      const tryPlay = () => v.play().catch(() => {});
+      if (v.readyState >= 2){ hideLoader(); tryPlay(); }
+      else v.addEventListener('loadeddata', () => { hideLoader(); tryPlay(); }, { once: true });
+
+      isPlaying = true;
+      playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+      playBtn.lastChild.textContent = 'Pausa';
+    });
+  });
+
+  /* ----------------------------------------------------
+     LOADER
+  ---------------------------------------------------- */
+  function showLoader(){ loader.classList.remove('hidden'); }
+  function hideLoader(){ loader.classList.add('hidden'); }
+
+  const firstVideo = videoEls[currentTour];
+  firstVideo.addEventListener('loadeddata', () => {
+    hideLoader();
+    firstVideo.play().catch(() => {});
+  }, { once: true });
+  firstVideo.addEventListener('error', () => {
+    loader.querySelector('p').textContent = 'No se encontró el video 360°';
+  });
+
+  /* fallback: hide loader if video doesn't fire events but texture has data */
+  setTimeout(() => { if (firstVideo.readyState >= 2) hideLoader(); }, 4000);
+
+  resize();
+  animate();
+})();
+</script>
+</body>
+</html>
